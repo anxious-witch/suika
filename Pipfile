@@ -8,6 +8,11 @@ verify_ssl = true
 [packages]
 suika = {editable = true,path = "."}
 requests = "*"
+flask = "*"
+psycopg2 = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.8"
