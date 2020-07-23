@@ -1,4 +1,8 @@
 from suika.jobs.scrape import BeerScrape
 
 scraper = BeerScrape()
-scraper.scrape()
+data = scraper.scrape()
+
+for d in data:
+    print(d)
+    print()
