@@ -23,10 +23,6 @@ def create_app():
     return app
 
 
-def scr():
+def scheduled_scraper():
     scraper = BeerScrape()
-    data = scraper.scrape()
-
-    for d in data:
-        print(d)
-        print()
+    scraper.scrape()
