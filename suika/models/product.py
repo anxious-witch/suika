@@ -1,4 +1,5 @@
 from suika.models.db import db
+from sqlalchemy.sql import func
 
 
 class Product(db.Model):
@@ -14,9 +15,10 @@ class Product(db.Model):
     sub_style = db.Column(db.String, nullable=False)
     producer = db.Column(db.String, nullable=False)
     short_description = db.Column(db.Text)
-    date_on_market = db.Column(db.DateTime, nullable=False)
     season = db.Column(db.String, nullable=False)
     prices = db.relationship('Price', back_populates='product')
+    date_created = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+    date_modified = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
     def add(self) -> None:
         db.session.add(self)
@@ -36,7 +38,7 @@ class Product(db.Model):
             'sub_style': self.sub_style,
             'producer': self.producer,
             'short_description': self.short_description,
-            'date_on_market': self.date_on_market,
+            'date_created': self.date_created,
             'season': self.season,
             'prices': [price.serialize() for price in self.prices]
         }
