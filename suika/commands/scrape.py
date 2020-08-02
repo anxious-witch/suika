@@ -6,7 +6,5 @@ from suika.jobs.scrape import BeerScrape
 @click.command('scrape')
 @with_appcontext
 def scrape():
-    print('Running scraper...')
     scraper = BeerScrape()
     scraper.run()
-    print('Done')

@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from dotenv import load_dotenv
+
 from suika.routes import index
 from suika.routes import product
 from suika.models.db import db, migrate
@@ -18,6 +19,7 @@ def create_app():
     app.register_blueprint(product.blueprint)
     app.cli.add_command(scrape)
 
+    # Init app
     db.init_app(app)
     migrate.init_app(app, db)
 

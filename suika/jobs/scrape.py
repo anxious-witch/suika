@@ -3,6 +3,7 @@ import json
 import requests
 from urllib import parse
 from bs4 import BeautifulSoup
+from datetime import datetime
 from suika.models.product import Product
 from suika.models.price import Price
 
@@ -17,10 +18,22 @@ class BeerScrape:
     }
 
     def run(self) -> None:
+        header = f'-----[{datetime.utcnow()}]-----'
+
+        print(header)
+        print('Starting scraper')
+        print('Getting beer styles...')
+
         styles = self.__get_styles()
         sub_styles = self.__get_sub_styles(styles)
 
-        self.__get_beer(styles=styles, sub_styles=sub_styles)
+        print('Getting beer catalogue...')
+        stats = self.__get_beer(styles=styles, sub_styles=sub_styles)
+        print((
+            f' + {stats["updated"]} prices recorded\n'
+            f' + {stats["added"]} new products added\n'
+            f'{"-" * len(header)}\n'
+        ))
 
     def __get_styles(self) -> dict:
         """Parse the product category page
@@ -85,6 +98,11 @@ class BeerScrape:
             'count': '0',
             'skip': '0'
         }
+        stats = {
+            'added': 0,
+            'updated': 0,
+        }
+
         res = requests.get(self.BEER_URL, params=params, headers=self.HEADERS)
         params['count'] = self.__get_total(res)
 
@@ -113,14 +131,17 @@ class BeerScrape:
             sentinel = Product.query.filter_by(sku=str(d['ProductID'])).first()
             if sentinel is None:
                 product.add()
+                stats['added'] += 1
             else:
                 product = sentinel
 
             product.prices.append(
                 Price(price=int(d['ProductPrice']))
             )
-
+            stats['updated'] += 1
             product.add()
+
+        return stats
 
     def __get_total(self, res) -> int:
         return json.loads(res.json()['d'])['total']
