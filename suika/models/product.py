@@ -1,8 +1,8 @@
+from suika.models.base import Base
 from suika.models.db import db
-from sqlalchemy.sql import func
 
 
-class Product(db.Model):
+class Product(Base):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     sku = db.Column(db.String, unique=True, index=True, nullable=False)
     name = db.Column(db.String, nullable=False)
@@ -17,12 +17,6 @@ class Product(db.Model):
     short_description = db.Column(db.Text)
     season = db.Column(db.String, nullable=False)
     prices = db.relationship('Price', back_populates='product')
-    date_created = db.Column(db.DateTime, server_default=func.now(), nullable=False)
-    date_modified = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
-
-    def add(self) -> None:
-        db.session.add(self)
-        db.session.commit()
 
     def serialize(self) -> dict:
         return {
