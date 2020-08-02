@@ -1,18 +1,25 @@
 import json
 import requests
-from datetime import datetime
 from suika.models.product import Product
 from suika.models.price import Price
 
 
 class BeerScrape:
     API_URL = 'https://www.vinbudin.is/addons/origo/module/ajaxwebservices/search.asmx/DoSearch'
+    INDEX_URL = 'https://www.vinbudin.is/heim/vorur'
     HEADERS = {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
     }
 
-    def scrape(self) -> dict:
+    def run(self) -> None:
+        self.__get_beer({})
+
+    def __get_styles(self) -> dict:
+        res = requests.get(self.INDEX_URL)
+        print(res)
+
+    def __get_beer(self, beer_styles: dict) -> dict:
         params = {
             'category': 'beer',
             'count': '0',
@@ -37,11 +44,9 @@ class BeerScrape:
                 sub_style=d['ProductTasteGroup2'],
                 producer=d['ProductProducer'],
                 short_description=d['ProductShortDescription'],
-                date_on_market=datetime.fromisoformat(
-                    d['ProductDateOnMarket']
-                ),
-                season=d['ProductSeasonCode'],
+                season=d['ProductSeasonCode']
             )
+
             sentinel = Product.query.filter_by(sku=str(d['ProductID'])).first()
             if sentinel is None:
                 product.add()
@@ -49,11 +54,9 @@ class BeerScrape:
                 product = sentinel
 
             product.prices.append(
-                Price(
-                    price=int(d['ProductPrice']),
-                    date=datetime.now()
-                )
+                Price(price=int(d['ProductPrice']))
             )
+
             product.add()
 
     def __get_total(self, res) -> int:
