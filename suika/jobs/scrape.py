@@ -10,7 +10,7 @@ from suika.models.price import Price
 
 class BeerScrape:
     BEER_URL = 'https://www.vinbudin.is/addons/origo/module/ajaxwebservices/search.asmx/DoSearch'
-    STYLE_URL = 'https://www.vinbudin.is/addons/origo/module/ajaxwebservices/search.asmx/GetAllBeerTaste2Categories'
+    STYLE_URL = 'https://www.vinbudin.is/addons/origo/module/ajaxwebservices/search.asmx/GetAllTaste2Categories'
     INDEX_URL = 'https://www.vinbudin.is/heim/vorur'
     HEADERS = {
         'Accept': 'application/json',
